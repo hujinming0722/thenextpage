@@ -44,8 +44,6 @@ class FloatWindow(QWidget):
         # 调整窗口大小以适应内容
         self.resize(self.ui_widget.size())
         
-        # 设置UI widget的属性，使其不拦截鼠标事件
-        self.ui_widget.setAttribute(Qt.WA_TransparentForMouseEvents, True)
         
     def setup_window(self):
         # 获取屏幕尺寸
