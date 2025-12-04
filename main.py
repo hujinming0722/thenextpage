@@ -3,6 +3,7 @@ import os
 import json
 import win32gui
 import win32con
+import winreg
 from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QSystemTrayIcon, QMenu, QMessageBox, QStyle
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import Qt, QTimer, QPoint
@@ -197,17 +198,24 @@ class FloatWindow(QWidget):
 
 
 class PPTController:
-    def __init__(self):
-        self.app = QApplication(sys.argv)
+    def __init__(self, app):
+        self.app = app
         self.left_window = None
         self.right_window = None
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.check_ppt_processes)
-        self.timer.start(1000)  # 每秒检查一次
-        self.position_adjust_mode = False  # 悬浮窗位置调整模式
+        self.presentation_mode_active = False  # 标记是否处于演示模式
+        self.startup_enabled = self.is_auto_startup_enabled()  # 开机自启动状态
+        self.last_process_check = set()  # 上次检查时的进程列表
         
         # 创建系统托盘图标
         self.create_system_tray_icon()
+        self.setup_process_monitoring()
+        
+    def setup_process_monitoring(self):
+        """设置进程监控"""
+        # 使用定时器定期检查进程
+        self.process_timer = QTimer()
+        self.process_timer.timeout.connect(self.check_presentation_processes)
+        self.process_timer.start(2000)  # 每2秒检查一次
         
     def create_system_tray_icon(self):
         # 创建系统托盘图标
@@ -239,6 +247,13 @@ class PPTController:
         self.position_adjust_action.triggered.connect(self.toggle_position_adjust_mode)
         tray_menu.addAction(self.position_adjust_action)
         
+        # 添加开机自启动复选框
+        self.startup_action = QAction("开机自启动", self.app)
+        self.startup_action.setCheckable(True)
+        self.startup_action.setChecked(self.startup_enabled)
+        self.startup_action.triggered.connect(self.toggle_startup)
+        tray_menu.addAction(self.startup_action)
+        
         exit_action = QAction("退出", self.app)
         exit_action.triggered.connect(self.exit_app)
         tray_menu.addAction(exit_action)
@@ -260,22 +275,29 @@ class PPTController:
             else:
                 self.show_windows()
                 
-    def check_ppt_processes(self):
-        # 检查是否有PowerPoint或WPS进程在运行
-        ppt_running = False
+    def check_presentation_processes(self):
+        """检查演示进程并控制窗口显示"""
+        presentation_detected = False
+        
+        # 检查PowerPoint或WPS进程
         for proc in psutil.process_iter(['name']):
             try:
                 proc_name = proc.info['name'].lower()
-                if 'powerpnt' in proc_name or 'wps' in proc_name:
-                    ppt_running = True
+                
+                # 检查是否为PowerPoint或WPS演示相关进程
+                if any(keyword in proc_name for keyword in ['powerpnt', 'wpp', 'wps']):
+                    presentation_detected = True
                     break
+                    
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
-                
-        # 根据PPT是否运行来显示或隐藏窗口
-        if ppt_running:
+        
+        # 根据检测结果显示或隐藏窗口
+        if presentation_detected and not self.presentation_mode_active:
+            self.presentation_mode_active = True
             self.show_windows()
-        else:
+        elif not presentation_detected and self.presentation_mode_active:
+            self.presentation_mode_active = False
             self.hide_windows()
             
     def show_windows(self):
@@ -317,6 +339,15 @@ class PPTController:
             else:
                 # 正常操作模式：按钮可点击，窗口不可拖拽
                 self.right_window.setWindowOpacity(1.0)
+                
+    def toggle_startup(self, checked):
+        """切换开机自启动"""
+        success = self.set_auto_startup(checked)
+        if not success:
+            # 如果设置失败，恢复复选框状态
+            self.startup_action.setChecked(not checked)
+            # 显示错误消息
+            self.tray_icon.showMessage("错误", "设置开机自启动失败", QSystemTrayIcon.Critical)
     
     def exit_app(self):
         # 退出应用程序
@@ -324,12 +355,59 @@ class PPTController:
         self.tray_icon.hide()
         self.app.quit()
         
+    def get_startup_key(self):
+        """获取Windows启动项注册表键"""
+        return r"Software\Microsoft\Windows\CurrentVersion\Run"
+        
+    def is_auto_startup_enabled(self):
+        """检查是否已设置开机自启动"""
+        try:
+            # 打开注册表键
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, self.get_startup_key(), 0, winreg.KEY_READ)
+            # 尝试读取值
+            winreg.QueryValueEx(key, "PPTController")
+            winreg.CloseKey(key)
+            return True
+        except FileNotFoundError:
+            # 键不存在
+            return False
+        except Exception:
+            # 其他错误
+            return False
+            
+    def set_auto_startup(self, enable=True):
+        """设置开机自启动"""
+        try:
+            # 打开注册表键
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, self.get_startup_key(), 0, winreg.KEY_WRITE)
+            
+            if enable:
+                # 获取当前Python脚本的路径
+                script_path = os.path.abspath(sys.argv[0])
+                # 添加到启动项
+                winreg.SetValueEx(key, "PPTController", 0, winreg.REG_SZ, f'"{sys.executable}" "{script_path}"')
+            else:
+                # 从启动项中删除
+                try:
+                    winreg.DeleteValue(key, "PPTController")
+                except FileNotFoundError:
+                    # 值不存在，忽略错误
+                    pass
+                    
+            winreg.CloseKey(key)
+            self.startup_enabled = enable
+            return True
+        except Exception as e:
+            print(f"设置开机自启动失败: {e}")
+            return False
+        
     def run(self):
         # 初始检查
-        self.check_ppt_processes()
+        self.check_presentation_processes()
         sys.exit(self.app.exec())
 
 
 if __name__ == "__main__":
-    controller = PPTController()
+    app = QApplication(sys.argv)
+    controller = PPTController(app)
     controller.run()
