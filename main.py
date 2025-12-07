@@ -10,7 +10,6 @@ from PySide6.QtCore import Qt, QTimer, QPoint
 from PySide6.QtGui import QKeySequence, QShortcut, QIcon, QAction
 import psutil
 import pyautogui
-import icon
 
 
 class FloatWindow(QWidget):
@@ -26,7 +25,7 @@ class FloatWindow(QWidget):
     def init_ui(self):
         # 加载UI文件
         loader = QUiLoader()
-        ui_file = os.path.join(os.path.dirname(__file__), "floatWindow2.ui")
+        ui_file = os.path.join(os.path.dirname(__file__), "ui","floatWindow2.ui")
         self.ui_widget = loader.load(ui_file, self)
         
         # 获取按钮引用
@@ -220,7 +219,7 @@ class PPTController:
         self.tray_icon = QSystemTrayIcon()
         
         # 设置图标（使用自定义图标）
-        icon_path = os.path.join(os.path.dirname(__file__), "icon.png")
+        icon_path = os.path.join(os.path.dirname(__file__),"ui","icon.png")
         if os.path.exists(icon_path):
             self.tray_icon.setIcon(QIcon(icon_path))
         else:
@@ -315,6 +314,7 @@ class PPTController:
             
     def toggle_position_adjust_mode(self, checked):
         """切换悬浮窗位置调整模式"""
+        self.show_windows()
         self.position_adjust_mode = checked
         
         # 更新悬浮窗的拖拽状态
@@ -324,9 +324,15 @@ class PPTController:
             if checked:
                 # 调整位置模式：窗口可拖拽，按钮不可点击
                 self.left_window.setWindowOpacity(0.7)  # 半透明效果提示用户处于调整模式
+                # 禁用按钮
+                self.left_window.pushButton.setEnabled(False)
+                self.left_window.pushButton_2.setEnabled(False)
             else:
                 # 正常操作模式：按钮可点击，窗口不可拖拽
                 self.left_window.setWindowOpacity(1.0)
+                # 启用按钮
+                self.left_window.pushButton.setEnabled(True)
+                self.left_window.pushButton_2.setEnabled(True)
                 
         if self.right_window:
             self.right_window.draggable = checked
@@ -334,9 +340,15 @@ class PPTController:
             if checked:
                 # 调整位置模式：窗口可拖拽，按钮不可点击
                 self.right_window.setWindowOpacity(0.7)  # 半透明效果提示用户处于调整模式
+                # 禁用按钮
+                self.right_window.pushButton.setEnabled(False)
+                self.right_window.pushButton_2.setEnabled(False)
             else:
                 # 正常操作模式：按钮可点击，窗口不可拖拽
                 self.right_window.setWindowOpacity(1.0)
+                # 启用按钮
+                self.right_window.pushButton.setEnabled(True)
+                self.right_window.pushButton_2.setEnabled(True)
                 
     def toggle_startup(self, checked):
         """切换开机自启动"""

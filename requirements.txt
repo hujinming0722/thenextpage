@@ -1,3 +1,4 @@
-psutil==5.9.8
-pyautogui==0.9.54
-pywin32==306
+psutil
+pyautogui
+pywin32
+pyside6
