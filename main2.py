@@ -7,7 +7,7 @@ import winreg
 from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QSystemTrayIcon, QMenu, QMessageBox, QStyle
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QIcon, QAction
+from PySide6.QtGui import QIcon, QAction,QMouseEvent
 import psutil
 import pyautogui
 class FloatWindow(QWidget):
@@ -54,15 +54,32 @@ class FloatWindow(QWidget):
         #只能说基本功不扎实是这样的，ai写的代码根本看不懂啊喂，参数往哪边传都不知道，只知道从某个地方调用他时加r或l可以输出不同位置
         if self.side == 'left':
             x = 0
-        else:  # right
+        else:  # 右边的
             x = screen_width - window_width
             
         self.move(x, y)
     def mousePressEvent(self, event):
         """处理鼠标按下事件，用于窗口拖拽"""
-        if self.draggable and event.button() == Qt.LeftButton:
+        if self.draggable and event.button() == Qt.MouseButton.LeftButton:
             self.drag_position = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
             event.accept()
         else:
             super().mousePressEvent(event)  # 让子控件处理事件
             
+    def mouseMoveEvent(self, event):
+        """处理鼠标移动事件，用于窗口拖拽"""
+        if self.draggable and event.buttons() == Qt.MouseButton.LeftButton and self.drag_position is not None:
+            self.move(event.globalPosition().toPoint() - self.drag_position)
+            event.accept()
+        else:
+            super().mouseMoveEvent(event)  # 让子控件处理事件
+            
+    def mouseReleaseEvent(self, event):
+        """处理鼠标释放事件，保存窗口位置"""
+        if self.draggable and event.button() == Qt.MouseButton.LeftButton and self.drag_position is not None:
+            self.drag_position = None
+            self.save_position()  # 保存当前位置
+            event.accept()
+        else:
+            super().mouseReleaseEvent(event)  # 让子控件处理事件
+        
