@@ -7,8 +7,8 @@ import winreg
 from typing import Optional, List
 from PySide6.QtWidgets import (QApplication, QWidget, QPushButton, QSystemTrayIcon, QMenu, QStyle)
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtCore import (Qt, QTimer, QPoint, QEvent, QByteArray, QMetaObject, Slot)
-from PySide6.QtGui import (QIcon, QAction, QMouseEvent, QGuiApplication)
+from PySide6.QtCore import (Qt, QTimer, QEvent, QPoint)
+from PySide6.QtGui import (QIcon, QAction, QGuiApplication, QMouseEvent)
 import psutil
 import pyautogui
 
@@ -20,6 +20,7 @@ class FloatWindow(QWidget):
         self.ui_widget: Optional[QWidget] = None
         self.pushButton: Optional[QPushButton] = None
         self.pushButton_2: Optional[QPushButton] = None
+        self.context_menu: Optional[QMenu] = None  # 右键菜单
 
         self.init_ui()
         self.setup_window()
@@ -30,7 +31,6 @@ class FloatWindow(QWidget):
         loader = QUiLoader()
         ui_file = os.path.join(os.path.dirname(__file__), "ui", "floatWindow2.ui")
         
-
         self.ui_widget = loader.load(ui_file, self)
 
         # 获取按钮引用（增加空值检查）
@@ -46,7 +46,7 @@ class FloatWindow(QWidget):
                 self.pushButton_2 = btn2
                 self.pushButton_2.clicked.connect(self.simulate_down_key)
         
-        # 设置窗口属性（修复Qt常量访问）
+        # 设置窗口属性
         self.setWindowFlags(
             Qt.WindowType.FramelessWindowHint | 
             Qt.WindowType.WindowStaysOnTopHint | 
@@ -78,8 +78,20 @@ class FloatWindow(QWidget):
             x = screen_width - window_width
             
         self.move(x, y)
-        
     
+    def set_context_menu(self, menu: QMenu) -> None:
+        """设置右键菜单"""
+        self.context_menu = menu
+        
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        """鼠标按下事件处理 - 捕获右键点击"""
+        # 检测右键点击
+        if event.button() == Qt.MouseButton.RightButton and self.context_menu:
+            # 在鼠标位置显示右键菜单
+            self.context_menu.exec(event.globalPosition().toPoint())
+            event.accept()
+        else:
+            super().mousePressEvent(event)
     
     def find_presentation_window(self) -> Optional[int]:
         """查找WPS或PowerPoint的放映窗口"""
@@ -135,7 +147,7 @@ class PPTController:
         self.process_timer: Optional[QTimer] = None
         self.tray_icon: Optional[QSystemTrayIcon] = None
         self.startup_action: Optional[QAction] = None
-        self.position_adjust_action: Optional[QAction] = None
+        self.tray_menu: Optional[QMenu] = None  # 保存托盘菜单引用
         
         # 创建系统托盘图标
         self.create_system_tray_icon()
@@ -164,29 +176,29 @@ class PPTController:
             self.tray_icon.setIcon(standard_icon)
         
         # 创建右键菜单
-        tray_menu = QMenu()
+        self.tray_menu = QMenu()
         
         # 添加菜单项
         show_action = QAction("显示窗口", self.app)
         show_action.triggered.connect(self.show_windows)
-        tray_menu.addAction(show_action)
+        self.tray_menu.addAction(show_action)
         
         hide_action = QAction("隐藏窗口", self.app)
         hide_action.triggered.connect(self.hide_windows)
-        tray_menu.addAction(hide_action)
+        self.tray_menu.addAction(hide_action)
         
         # 添加开机自启动复选框
         self.startup_action = QAction("开机自启动", self.app)
         self.startup_action.setCheckable(True)
         self.startup_action.setChecked(self.startup_enabled)
         self.startup_action.triggered.connect(self.toggle_startup)
-        tray_menu.addAction(self.startup_action)
+        self.tray_menu.addAction(self.startup_action)
         
         exit_action = QAction("退出", self.app)
         exit_action.triggered.connect(self.exit_app)
-        tray_menu.addAction(exit_action)
+        self.tray_menu.addAction(exit_action)
         
-        self.tray_icon.setContextMenu(tray_menu)
+        self.tray_icon.setContextMenu(self.tray_menu)
         
         # 显示系统托盘图标
         self.tray_icon.show()
@@ -234,8 +246,15 @@ class PPTController:
         """显示悬浮窗口"""
         if self.left_window is None:
             self.left_window = FloatWindow('left')
+            # 为悬浮窗设置右键菜单
+            if self.tray_menu:
+                self.left_window.set_context_menu(self.tray_menu)
+                
         if self.right_window is None:
             self.right_window = FloatWindow('right')
+            # 为悬浮窗设置右键菜单
+            if self.tray_menu:
+                self.right_window.set_context_menu(self.tray_menu)
             
         self.left_window.show()
         self.right_window.show()
@@ -247,7 +266,6 @@ class PPTController:
         if self.right_window:
             self.right_window.hide()
             
-                
     def toggle_startup(self, checked: bool) -> None:
         """切换开机自启动"""
         success = self.set_auto_startup(checked)
