@@ -1,14 +1,13 @@
 import sys
 import os
-import json
 import win32gui
 import win32con
 import winreg
 from typing import Optional, List
-from PySide6.QtWidgets import (QApplication, QWidget, QPushButton, QSystemTrayIcon, QMenu, QStyle)
+from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QSystemTrayIcon, QMenu, QStyle
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtCore import (Qt, QTimer, QEvent, QPoint)
-from PySide6.QtGui import (QIcon, QAction, QGuiApplication, QMouseEvent)
+from PySide6.QtCore import Qt, QTimer, QEvent, QPoint
+from PySide6.QtGui import QIcon, QAction, QGuiApplication, QMouseEvent
 import psutil
 import pyautogui
 
