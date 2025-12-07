@@ -17,6 +17,7 @@ pip install -r requirements.txt
 ```
 
 ## 使用方法
+下载GitHub中的release或者
 
 直接运行main.py文件：
 
