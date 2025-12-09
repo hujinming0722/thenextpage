@@ -6,7 +6,7 @@ import winreg
 from typing import Optional, List
 from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QSystemTrayIcon, QMenu, QStyle
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtCore import Qt, QTimer, QEvent, QPoint
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon, QAction, QGuiApplication, QMouseEvent
 import psutil
 import pyautogui
