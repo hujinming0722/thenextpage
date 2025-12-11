@@ -28,7 +28,7 @@ class FloatWindow(QWidget):
         """初始化UI界面"""
         # 加载UI文件
         loader = QUiLoader()
-        ui_file = os.path.join(os.path.dirname(__file__), "ui", "floatWindow2.ui")
+        ui_file = os.path.join(os.path.dirname(__file__), "ui", "updownWindow.ui")
         
         self.ui_widget = loader.load(ui_file, self)
 
@@ -133,12 +133,142 @@ class FloatWindow(QWidget):
         # 模拟按下向下键
         pyautogui.press('down')
 
+class penWindow(QWidget):
+    def __init__(self, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+        self.ui_widget: Optional[QWidget] = None
+        self.EraserButton: Optional[QPushButton] = None
+        self.ExitButton: Optional[QPushButton] = None
+        self.PenButton: Optional[QPushButton] = None
+        self.context_menu: Optional[QMenu] = None  # 右键菜单
+
+        self.init_ui()
+        self.setup_window()
+        
+    def init_ui(self) -> None:
+        """初始化UI界面"""
+        # 加载UI文件
+        loader = QUiLoader()
+        ui_file = os.path.join(os.path.dirname(__file__), "ui", "penslot.ui")
+        
+        self.ui_widget = loader.load(ui_file, self)
+
+        # 获取按钮引用（增加空值检查）
+        if self.ui_widget:
+            btn1 = self.ui_widget.findChild(QPushButton, "PenButton")
+            btn2 = self.ui_widget.findChild(QPushButton, "EraserButton")
+            btn3 = self.ui_widget.findChild(QPushButton, "ExitButton")
+            if btn1:
+                self.PenButton = btn1
+                self.PenButton.clicked.connect(self.simulate_up_key)
+                
+            if btn2:
+                self.EraserButton = btn2
+                self.EraserButton.clicked.connect(self.simulate_down_key)
+            
+            if btn3:
+                self.ExitButton = btn3
+                self.ExitButton.clicked.connect(self.simulate_Esc_key)
+        
+        # 设置窗口属性
+        self.setWindowFlags(
+            Qt.WindowType.FramelessWindowHint | 
+            Qt.WindowType.Tool
+        )
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+        
+        # 调整窗口大小以适应内容
+        if self.ui_widget:
+            self.resize(self.ui_widget.size())
+        
+    def setup_window(self) -> None:
+        """设置窗口初始位置"""
+        # 获取屏幕尺寸
+        screen = QGuiApplication.primaryScreen().geometry()
+        #screen_width = screen.width()
+        screen_height = screen.height()
+        
+        # 计算窗口位置
+        #window_width = self.width()
+        #window_height = self.height()
+        
+        # 居于屏幕右下方
+        y = screen_height -100
+        x = 0            
+        self.move(x, y)
+    
+    def set_context_menu(self, menu: QMenu) -> None:
+        """设置右键菜单"""
+        self.context_menu = menu
+        
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        """鼠标按下事件处理 - 捕获右键点击"""
+        # 检测右键点击
+        if event.button() == Qt.MouseButton.RightButton and self.context_menu:
+            # 在鼠标位置显示右键菜单
+            self.context_menu.exec(event.globalPosition().toPoint())
+            event.accept()
+        else:
+            super().mousePressEvent(event)
+    
+    def find_presentation_window(self) -> Optional[int]:
+        """查找WPS或PowerPoint的放映窗口"""
+        windows: List[int] = []
+        
+        def enum_windows_callback(hwnd: int, extra: List[int]) -> bool:
+            if win32gui.IsWindowVisible(hwnd):
+                window_text = win32gui.GetWindowText(hwnd) or ""
+                class_name = win32gui.GetClassName(hwnd) or ""
+                # 查找WPS或PowerPoint的放映窗口
+                if (any(keyword in window_text.lower() for keyword in ['wps', 'powerpoint', '演示']) or 
+                    any(keyword in class_name.lower() for keyword in ['wpp', 'powerpnt', 'presentation'])):
+                    extra.append(hwnd)
+            return True
+        
+        win32gui.EnumWindows(enum_windows_callback, windows)
+        return windows[0] if windows else None
+    
+    def simulate_up_key(self) -> None:
+        """模拟上一页按键"""
+        # 查找并激活演示窗口
+        hwnd = self.find_presentation_window()
+        if hwnd:
+            # 激活窗口
+            win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+            win32gui.SetForegroundWindow(hwnd)
+            
+        # 模拟按下向上键
+        pyautogui.press('up')
+        
+    def simulate_down_key(self) -> None:
+        """模拟下一页按键"""
+        # 查找并激活演示窗口
+        hwnd = self.find_presentation_window()
+        if hwnd:
+            # 激活窗口
+            win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+            win32gui.SetForegroundWindow(hwnd)
+            
+        # 模拟按下向下键
+        pyautogui.press('down')
+    def simulate_Esc_key(self) -> None:
+        """模拟下一页按键"""
+        # 查找并激活演示窗口
+        hwnd = self.find_presentation_window()
+        if hwnd:
+            # 激活窗口
+            win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+            win32gui.SetForegroundWindow(hwnd)
+            
+        # 模拟按下向下键
+        pyautogui.press('esc')
 
 class PPTController:
     def __init__(self, app: QApplication):
         self.app = app
         self.left_window: Optional[FloatWindow] = None
         self.right_window: Optional[FloatWindow] = None
+        self.Pwindow: Optional[penWindow] = None
         self.presentation_mode_active: bool = False  # 标记是否处于演示模式
         self.startup_enabled: bool = self.is_auto_startup_enabled()  # 开机自启动状态
         self.last_process_check: set = set()  # 上次检查时的进程列表
@@ -254,9 +384,18 @@ class PPTController:
             # 为悬浮窗设置右键菜单
             if self.tray_menu:
                 self.right_window.set_context_menu(self.tray_menu)
+
+                
+        if self.Pwindow is None:
+            self.Pwindow = penWindow()
+            # 为悬浮窗设置右键菜单
+            if self.tray_menu:
+                self.Pwindow.set_context_menu(self.tray_menu)        
             
         self.left_window.show()
         self.right_window.show()
+        self.Pwindow.show()
+        
         
     def hide_windows(self) -> None:
         """隐藏悬浮窗口"""
@@ -264,6 +403,8 @@ class PPTController:
             self.left_window.hide()
         if self.right_window:
             self.right_window.hide()
+        if self.Pwindow:
+            self.Pwindow.hide()
             
     def toggle_startup(self, checked: bool) -> None:
         """切换开机自启动"""
