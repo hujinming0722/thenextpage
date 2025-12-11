@@ -38,6 +38,8 @@
     <font>
      <pointsize>20</pointsize>
      <bold>true</bold>
+     <underline>false</underline>
+     <strikeout>true</strikeout>
     </font>
    </property>
    <property name="text">
@@ -57,6 +59,7 @@
     <font>
      <pointsize>15</pointsize>
      <bold>true</bold>
+     <strikeout>true</strikeout>
     </font>
    </property>
    <property name="text">

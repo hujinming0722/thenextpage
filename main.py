@@ -10,6 +10,7 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon, QAction, QGuiApplication, QMouseEvent
 import psutil
 import pyautogui
+import time
 
 
 class FloatWindow(QWidget):
@@ -160,11 +161,11 @@ class penWindow(QWidget):
             btn3 = self.ui_widget.findChild(QPushButton, "ExitButton")
             if btn1:
                 self.PenButton = btn1
-                self.PenButton.clicked.connect(self.simulate_up_key)
+                self.PenButton.clicked.connect(self.simulate_Pen_key)
                 
             if btn2:
                 self.EraserButton = btn2
-                self.EraserButton.clicked.connect(self.simulate_down_key)
+                self.EraserButton.clicked.connect(self.simulate_Eraser_key)
             
             if btn3:
                 self.ExitButton = btn3
@@ -173,6 +174,7 @@ class penWindow(QWidget):
         # 设置窗口属性
         self.setWindowFlags(
             Qt.WindowType.FramelessWindowHint | 
+            Qt.WindowType.WindowStaysOnTopHint | 
             Qt.WindowType.Tool
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
@@ -227,32 +229,32 @@ class penWindow(QWidget):
         
         win32gui.EnumWindows(enum_windows_callback, windows)
         return windows[0] if windows else None
-    
-    def simulate_up_key(self) -> None:
-        """模拟上一页按键"""
-        # 查找并激活演示窗口
-        hwnd = self.find_presentation_window()
-        if hwnd:
-            # 激活窗口
-            win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
-            win32gui.SetForegroundWindow(hwnd)
-            
-        # 模拟按下向上键
-        pyautogui.press('up')
         
-    def simulate_down_key(self) -> None:
-        """模拟下一页按键"""
+    def simulate_Pen_key(self) -> None:
+        """模拟笔按键"""
         # 查找并激活演示窗口
         hwnd = self.find_presentation_window()
         if hwnd:
             # 激活窗口
             win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
             win32gui.SetForegroundWindow(hwnd)
-            
+        time.sleep(0.3)    
         # 模拟按下向下键
-        pyautogui.press('down')
+        pyautogui.hotkey('ctrl','P')
+       
+    def simulate_Eraser_key(self) -> None:
+        """模拟橡皮按键"""
+        # 查找并激活演示窗口
+        hwnd = self.find_presentation_window()
+        if hwnd:
+            # 激活窗口
+            win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+            win32gui.SetForegroundWindow(hwnd)
+        time.sleep(0.3)    
+        # 模拟按下向下键
+        pyautogui.hotkey('ctrl','e')
     def simulate_Esc_key(self) -> None:
-        """模拟下一页按键"""
+        """模拟esc按键"""
         # 查找并激活演示窗口
         hwnd = self.find_presentation_window()
         if hwnd:
