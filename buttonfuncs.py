@@ -1,17 +1,13 @@
 
-import os
 import win32gui
 import win32con
-import winreg
 from typing import Optional, List
-from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QSystemTrayIcon, QMenu, QStyle
-from PySide6.QtUiTools import QUiLoader
-from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QIcon, QAction, QGuiApplication, QMouseEvent
-import psutil
+from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QMenu
+
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QGuiApplication, QMouseEvent
 import pyautogui
 import time
-
 class UpDownWindow(QWidget):
     def __init__(self, side: str = 'left', parent: Optional[QWidget] = None):
         super().__init__(parent)
@@ -26,11 +22,10 @@ class UpDownWindow(QWidget):
         
     def init_ui(self) -> None:
         """初始化UI界面"""
-        # 加载UI文件
-        loader = QUiLoader()
-        ui_file = os.path.join(os.path.dirname(__file__), "ui", "updownWindow.ui")
         
-        self.ui_widget = loader.load(ui_file, self)
+        from ui.updownWindow import Ui_Form
+        
+        self.ui_widget = Ui_Form
 
         # 获取按钮引用（增加空值检查）
         if self.ui_widget:
@@ -149,11 +144,9 @@ class penWindow(QWidget):
         
     def init_ui(self) -> None:
         """初始化UI界面"""
-        # 加载UI文件
-        loader = QUiLoader()
-        ui_file = os.path.join(os.path.dirname(__file__), "ui", "penslot.ui")
+        from ui.penslot import Ui_Form
         
-        self.ui_widget = loader.load(ui_file, self)
+        self.ui_widget = Ui_Form
 
         # 获取按钮引用（增加空值检查）
         if self.ui_widget:
