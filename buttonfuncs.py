@@ -1,44 +1,40 @@
-
 import win32gui
 import win32con
 from typing import Optional, List
 from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QMenu
-
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QGuiApplication, QMouseEvent
 import pyautogui
 import time
-class UpDownWindow(QWidget):
-    def __init__(self, side: str = 'left', parent: Optional[QWidget] = None):
-        super().__init__(parent)
+
+# 导入通过uic生成的UI类
+from ui.design.updownWindow import Ui_Form
+from ui.design.penslot import Ui_Form as penslots
+
+class UpDownWindow(QWidget, Ui_Form):
+    def __init__(self, side: str = 'left'):
+        # 正确调用父类初始化
+        super().__init__()
+        
         self.side: str = side  # 'left' 或 'right'
-        self.ui_widget: Optional[QWidget] = None
-        self.pushButton: Optional[QPushButton] = None
-        self.pushButton_2: Optional[QPushButton] = None
         self.context_menu: Optional[QMenu] = None  # 右键菜单
 
+        # 调用setupUi方法设置UI
+        self.setupUi(self)
+        
         self.init_ui()
         self.setup_window()
         
     def init_ui(self) -> None:
         """初始化UI界面"""
+        # 按钮引用已经通过setupUi设置好了
+        # 可以直接使用self.pushButton和self.pushButton_2
         
-        from ui.updownWindow import Ui_Form
-        
-        self.ui_widget = Ui_Form
-
-        # 获取按钮引用（增加空值检查）
-        if self.ui_widget:
-            btn1 = self.ui_widget.findChild(QPushButton, "pushButton")
-            btn2 = self.ui_widget.findChild(QPushButton, "pushButton_2")
+        if hasattr(self, 'pushButton') and self.pushButton:
+            self.pushButton.clicked.connect(self.simulate_up_key)
             
-            if btn1:
-                self.pushButton = btn1
-                self.pushButton.clicked.connect(self.simulate_up_key)
-                
-            if btn2:
-                self.pushButton_2 = btn2
-                self.pushButton_2.clicked.connect(self.simulate_down_key)
+        if hasattr(self, 'pushButton_2') and self.pushButton_2:
+            self.pushButton_2.clicked.connect(self.simulate_down_key)
         
         # 设置窗口属性
         self.setWindowFlags(
@@ -47,10 +43,6 @@ class UpDownWindow(QWidget):
             Qt.WindowType.Tool
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
-        
-        # 调整窗口大小以适应内容
-        if self.ui_widget:
-            self.resize(self.ui_widget.size())
         
     def setup_window(self) -> None:
         """设置窗口初始位置"""
@@ -129,41 +121,32 @@ class UpDownWindow(QWidget):
         pyautogui.press('down')
 
 
-
-class penWindow(QWidget):
-    def __init__(self, parent: Optional[QWidget] = None):
-        super().__init__(parent)
-        self.ui_widget: Optional[QWidget] = None
-        self.EraserButton: Optional[QPushButton] = None
-        self.ExitButton: Optional[QPushButton] = None
-        self.PenButton: Optional[QPushButton] = None
+class penWindow(QWidget, penslots):
+    def __init__(self):
+        # 正确调用父类初始化
+        super().__init__()
+        
         self.context_menu: Optional[QMenu] = None  # 右键菜单
 
+        # 调用setupUi方法设置UI
+        self.setupUi(self)
+        
         self.init_ui()
         self.setup_window()
         
     def init_ui(self) -> None:
         """初始化UI界面"""
-        from ui.penslot import Ui_Form
+        # 按钮引用已经通过setupUi设置好了
+        # 可以直接使用self.PenButton, self.EraserButton, self.ExitButton
         
-        self.ui_widget = Ui_Form
-
-        # 获取按钮引用（增加空值检查）
-        if self.ui_widget:
-            btn1 = self.ui_widget.findChild(QPushButton, "PenButton")
-            btn2 = self.ui_widget.findChild(QPushButton, "EraserButton")
-            btn3 = self.ui_widget.findChild(QPushButton, "ExitButton")
-            if btn1:
-                self.PenButton = btn1
-                self.PenButton.clicked.connect(self.simulate_Pen_key)
-                
-            if btn2:
-                self.EraserButton = btn2
-                self.EraserButton.clicked.connect(self.simulate_Eraser_key)
+        if hasattr(self, 'PenButton') and self.PenButton:
+            self.PenButton.clicked.connect(self.simulate_Pen_key)
             
-            if btn3:
-                self.ExitButton = btn3
-                self.ExitButton.clicked.connect(self.simulate_Esc_key)
+        if hasattr(self, 'EraserButton') and self.EraserButton:
+            self.EraserButton.clicked.connect(self.simulate_Eraser_key)
+            
+        if hasattr(self, 'ExitButton') and self.ExitButton:
+            self.ExitButton.clicked.connect(self.simulate_Esc_key)
         
         # 设置窗口属性
         self.setWindowFlags(
@@ -173,23 +156,14 @@ class penWindow(QWidget):
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
         
-        # 调整窗口大小以适应内容
-        if self.ui_widget:
-            self.resize(self.ui_widget.size())
-        
     def setup_window(self) -> None:
         """设置窗口初始位置"""
         # 获取屏幕尺寸
         screen = QGuiApplication.primaryScreen().geometry()
-        #screen_width = screen.width()
         screen_height = screen.height()
         
-        # 计算窗口位置
-        #window_width = self.width()
-        #window_height = self.height()
-        
-        # 居于屏幕右下方
-        y = screen_height -100
+        # 居于屏幕左下方
+        y = screen_height - 100
         x = 0            
         self.move(x, y)
     
@@ -233,8 +207,8 @@ class penWindow(QWidget):
             win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
             win32gui.SetForegroundWindow(hwnd)
         time.sleep(0.3)    
-        # 模拟按下向下键
-        pyautogui.hotkey('ctrl','P')
+        # 模拟按下Ctrl+P
+        pyautogui.hotkey('ctrl', 'P')
        
     def simulate_Eraser_key(self) -> None:
         """模拟橡皮按键"""
@@ -245,8 +219,9 @@ class penWindow(QWidget):
             win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
             win32gui.SetForegroundWindow(hwnd)
         time.sleep(0.3)    
-        # 模拟按下向下键
-        pyautogui.hotkey('ctrl','e')
+        # 模拟按下Ctrl+E
+        pyautogui.hotkey('ctrl', 'e')
+        
     def simulate_Esc_key(self) -> None:
         """模拟esc按键"""
         # 查找并激活演示窗口
@@ -256,5 +231,5 @@ class penWindow(QWidget):
             win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
             win32gui.SetForegroundWindow(hwnd)
             
-        # 模拟按下向下键
+        # 模拟按下Esc键
         pyautogui.press('esc')

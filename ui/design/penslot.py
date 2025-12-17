@@ -21,9 +21,9 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(152, 52)
+        Form.resize(202, 52)
         Form.setMinimumSize(QSize(152, 52))
-        Form.setMaximumSize(QSize(152, 52))
+        Form.setMaximumSize(QSize(202, 52))
         self.PenButton = QPushButton(Form)
         self.PenButton.setObjectName(u"PenButton")
         self.PenButton.setGeometry(QRect(0, 0, 50, 51))
@@ -43,13 +43,17 @@ class Ui_Form(object):
         self.EraserButton.setFont(font1)
         self.ExitButton = QPushButton(Form)
         self.ExitButton.setObjectName(u"ExitButton")
-        self.ExitButton.setGeometry(QRect(100, 0, 51, 51))
+        self.ExitButton.setGeometry(QRect(150, 0, 51, 51))
         font2 = QFont()
         font2.setPointSize(15)
         font2.setBold(True)
         font2.setUnderline(False)
         font2.setStrikeOut(False)
         self.ExitButton.setFont(font2)
+        self.clearButton = QPushButton(Form)
+        self.clearButton.setObjectName(u"clearButton")
+        self.clearButton.setGeometry(QRect(100, 0, 51, 51))
+        self.clearButton.setFont(font1)
 
         self.retranslateUi(Form)
 
@@ -62,5 +66,6 @@ class Ui_Form(object):
         self.EraserButton.setText(QCoreApplication.translate("Form", u"\u6a61\u76ae", None))
         self.ExitButton.setText(QCoreApplication.translate("Form", u"\u9000\u51fa\n"
 " PPT", None))
+        self.clearButton.setText(QCoreApplication.translate("Form", u"\u6e05\u5c4f", None))
     # retranslateUi
 
