@@ -28,8 +28,6 @@ class UpDownWindow(QWidget, Ui_Form):
     def init_ui(self) -> None:
         """初始化UI界面"""
         # 按钮引用已经通过setupUi设置好了
-        # 可以直接使用self.pushButton和self.pushButton_2
-        
         if hasattr(self, 'pushButton') and self.pushButton:
             self.pushButton.clicked.connect(self.simulate_up_key)
             
@@ -208,7 +206,7 @@ class penWindow(QWidget, penslots):
             win32gui.SetForegroundWindow(hwnd)
         time.sleep(0.3)    
         # 模拟按下Ctrl+P
-        pyautogui.hotkey('ctrl', 'P')
+        pyautogui.hotkey('ctrl', 'p')
        
     def simulate_Eraser_key(self) -> None:
         """模拟橡皮按键"""
