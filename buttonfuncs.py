@@ -6,6 +6,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QGuiApplication, QMouseEvent
 import pyautogui
 import time
+import os
 
 # 导入通过uic生成的UI类
 from ui.design.updownWindow import Ui_Form
@@ -146,13 +147,16 @@ class penWindow(QWidget, penslots):
         if hasattr(self, 'ExitButton') and self.ExitButton:
             self.ExitButton.clicked.connect(self.simulate_Esc_key)
         
+        if hasattr(self, 'whiteBoardButton') and self.whiteBoardButton:
+            self.whiteBoardButton.clicked.connect(self.open_sth)
+        
         # 设置窗口属性
         self.setWindowFlags(
-            Qt.WindowType.FramelessWindowHint | 
             Qt.WindowType.WindowStaysOnTopHint | 
             Qt.WindowType.Tool
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+        self.setWindowTitle("PenWindow")
         
     def setup_window(self) -> None:
         """设置窗口初始位置"""
@@ -161,7 +165,7 @@ class penWindow(QWidget, penslots):
         screen_height = screen.height()
         
         # 居于屏幕左下方
-        y = screen_height - 100
+        y = screen_height - 200
         x = 0            
         self.move(x, y)
     
@@ -192,7 +196,7 @@ class penWindow(QWidget, penslots):
                     any(keyword in class_name.lower() for keyword in ['wpp', 'powerpnt', 'presentation'])):
                     extra.append(hwnd)
             return True
-        
+            
         win32gui.EnumWindows(enum_windows_callback, windows)
         return windows[0] if windows else None
         
@@ -219,6 +223,7 @@ class penWindow(QWidget, penslots):
         time.sleep(0.3)    
         # 模拟按下Ctrl+E
         pyautogui.hotkey('ctrl', 'e')
+    
         
     def simulate_Esc_key(self) -> None:
         """模拟esc按键"""
@@ -231,3 +236,7 @@ class penWindow(QWidget, penslots):
             
         # 模拟按下Esc键
         pyautogui.press('esc')
+    def open_sth(self) -> None:
+        """打开希沃白板"""
+        softDir="C:\Program Files (x86)\Seewo\EasiNote5\swenlauncher\swenlauncher.exe"
+        os.system(softDir)

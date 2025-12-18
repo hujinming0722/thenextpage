@@ -31,7 +31,7 @@ class Ui_Form(object):
         font.setPointSize(20)
         font.setBold(True)
         font.setUnderline(False)
-        font.setStrikeOut(True)
+        font.setStrikeOut(False)
         self.PenButton.setFont(font)
         self.EraserButton = QPushButton(Form)
         self.EraserButton.setObjectName(u"EraserButton")
@@ -39,7 +39,7 @@ class Ui_Form(object):
         font1 = QFont()
         font1.setPointSize(15)
         font1.setBold(True)
-        font1.setStrikeOut(True)
+        font1.setStrikeOut(False)
         self.EraserButton.setFont(font1)
         self.ExitButton = QPushButton(Form)
         self.ExitButton.setObjectName(u"ExitButton")
@@ -50,10 +50,10 @@ class Ui_Form(object):
         font2.setUnderline(False)
         font2.setStrikeOut(False)
         self.ExitButton.setFont(font2)
-        self.clearButton = QPushButton(Form)
-        self.clearButton.setObjectName(u"clearButton")
-        self.clearButton.setGeometry(QRect(100, 0, 51, 51))
-        self.clearButton.setFont(font1)
+        self.whiteBoardButton = QPushButton(Form)
+        self.whiteBoardButton.setObjectName(u"whiteBoardButton")
+        self.whiteBoardButton.setGeometry(QRect(100, 0, 51, 51))
+        self.whiteBoardButton.setFont(font1)
 
         self.retranslateUi(Form)
 
@@ -66,6 +66,7 @@ class Ui_Form(object):
         self.EraserButton.setText(QCoreApplication.translate("Form", u"\u6a61\u76ae", None))
         self.ExitButton.setText(QCoreApplication.translate("Form", u"\u9000\u51fa\n"
 " PPT", None))
-        self.clearButton.setText(QCoreApplication.translate("Form", u"\u6e05\u5c4f", None))
+        self.whiteBoardButton.setText(QCoreApplication.translate("Form", u"\u5e0c\u6c83\n"
+"\u767d\u677f", None))
     # retranslateUi
 

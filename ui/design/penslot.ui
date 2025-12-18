@@ -39,7 +39,7 @@
      <pointsize>20</pointsize>
      <bold>true</bold>
      <underline>false</underline>
-     <strikeout>true</strikeout>
+     <strikeout>false</strikeout>
     </font>
    </property>
    <property name="text">
@@ -59,7 +59,7 @@
     <font>
      <pointsize>15</pointsize>
      <bold>true</bold>
-     <strikeout>true</strikeout>
+     <strikeout>false</strikeout>
     </font>
    </property>
    <property name="text">
@@ -88,7 +88,7 @@
  PPT</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="clearButton">
+  <widget class="QPushButton" name="whiteBoardButton">
    <property name="geometry">
     <rect>
      <x>100</x>
@@ -101,11 +101,12 @@
     <font>
      <pointsize>15</pointsize>
      <bold>true</bold>
-     <strikeout>true</strikeout>
+     <strikeout>false</strikeout>
     </font>
    </property>
    <property name="text">
-    <string>清屏</string>
+    <string>希沃
+白板</string>
    </property>
   </widget>
  </widget>
