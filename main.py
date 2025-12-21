@@ -246,7 +246,7 @@ class PPTController:
         """运行应用程序"""
         # 初始检查
         self.check_presentation_processes()
-        sys.exit(self.app.exec())
+        sys.exit(self.app.exec_())
 
 
 if __name__ == "__main__":

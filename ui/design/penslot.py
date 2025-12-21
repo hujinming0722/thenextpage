@@ -21,12 +21,10 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(202, 52)
-        Form.setMinimumSize(QSize(152, 52))
-        Form.setMaximumSize(QSize(202, 52))
+        Form.resize(60, 247)
         self.PenButton = QPushButton(Form)
         self.PenButton.setObjectName(u"PenButton")
-        self.PenButton.setGeometry(QRect(0, 0, 50, 51))
+        self.PenButton.setGeometry(QRect(0, 0, 60, 60))
         font = QFont()
         font.setPointSize(20)
         font.setBold(True)
@@ -35,7 +33,7 @@ class Ui_Form(object):
         self.PenButton.setFont(font)
         self.EraserButton = QPushButton(Form)
         self.EraserButton.setObjectName(u"EraserButton")
-        self.EraserButton.setGeometry(QRect(50, 0, 51, 51))
+        self.EraserButton.setGeometry(QRect(0, 60, 60, 60))
         font1 = QFont()
         font1.setPointSize(15)
         font1.setBold(True)
@@ -43,7 +41,7 @@ class Ui_Form(object):
         self.EraserButton.setFont(font1)
         self.ExitButton = QPushButton(Form)
         self.ExitButton.setObjectName(u"ExitButton")
-        self.ExitButton.setGeometry(QRect(150, 0, 51, 51))
+        self.ExitButton.setGeometry(QRect(0, 120, 60, 60))
         font2 = QFont()
         font2.setPointSize(15)
         font2.setBold(True)
@@ -52,7 +50,7 @@ class Ui_Form(object):
         self.ExitButton.setFont(font2)
         self.whiteBoardButton = QPushButton(Form)
         self.whiteBoardButton.setObjectName(u"whiteBoardButton")
-        self.whiteBoardButton.setGeometry(QRect(100, 0, 51, 51))
+        self.whiteBoardButton.setGeometry(QRect(0, 180, 60, 60))
         self.whiteBoardButton.setFont(font1)
 
         self.retranslateUi(Form)
@@ -65,7 +63,7 @@ class Ui_Form(object):
         self.PenButton.setText(QCoreApplication.translate("Form", u"\u7b14", None))
         self.EraserButton.setText(QCoreApplication.translate("Form", u"\u6a61\u76ae", None))
         self.ExitButton.setText(QCoreApplication.translate("Form", u"\u9000\u51fa\n"
-" PPT", None))
+"PPT", None))
         self.whiteBoardButton.setText(QCoreApplication.translate("Form", u"\u5e0c\u6c83\n"
 "\u767d\u677f", None))
     # retranslateUi

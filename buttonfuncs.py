@@ -156,7 +156,7 @@ class penWindow(QWidget, penslots):
             Qt.WindowType.Tool
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
-        self.setWindowTitle("PenWindow")
+        self.setWindowTitle("仅ppt可用")
         
     def setup_window(self) -> None:
         """设置窗口初始位置"""
@@ -165,7 +165,7 @@ class penWindow(QWidget, penslots):
         screen_height = screen.height()
         
         # 居于屏幕左下方
-        y = screen_height - 200
+        y = screen_height - 350
         x = 0            
         self.move(x, y)
     
@@ -238,5 +238,5 @@ class penWindow(QWidget, penslots):
         pyautogui.press('esc')
     def open_sth(self) -> None:
         """打开希沃白板"""
-        softDir="C:\Program Files (x86)\Seewo\EasiNote5\swenlauncher\swenlauncher.exe"
+        softDir = r'"C:\Program Files (x86)\Seewo\EasiNote5\swenlauncher\swenlauncher.exe"'
         os.system(softDir)
