@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'penslot.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.10.1
+## Created by: Qt User Interface Compiler version 6.10.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -21,10 +21,10 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(60, 247)
+        Form.resize(60, 297)
         self.PenButton = QPushButton(Form)
         self.PenButton.setObjectName(u"PenButton")
-        self.PenButton.setGeometry(QRect(0, 0, 60, 60))
+        self.PenButton.setGeometry(QRect(0, 60, 60, 60))
         font = QFont()
         font.setPointSize(20)
         font.setBold(True)
@@ -33,7 +33,7 @@ class Ui_Form(object):
         self.PenButton.setFont(font)
         self.EraserButton = QPushButton(Form)
         self.EraserButton.setObjectName(u"EraserButton")
-        self.EraserButton.setGeometry(QRect(0, 60, 60, 60))
+        self.EraserButton.setGeometry(QRect(0, 120, 60, 60))
         font1 = QFont()
         font1.setPointSize(15)
         font1.setBold(True)
@@ -41,7 +41,7 @@ class Ui_Form(object):
         self.EraserButton.setFont(font1)
         self.ExitButton = QPushButton(Form)
         self.ExitButton.setObjectName(u"ExitButton")
-        self.ExitButton.setGeometry(QRect(0, 120, 60, 60))
+        self.ExitButton.setGeometry(QRect(0, 180, 60, 60))
         font2 = QFont()
         font2.setPointSize(15)
         font2.setBold(True)
@@ -50,8 +50,12 @@ class Ui_Form(object):
         self.ExitButton.setFont(font2)
         self.whiteBoardButton = QPushButton(Form)
         self.whiteBoardButton.setObjectName(u"whiteBoardButton")
-        self.whiteBoardButton.setGeometry(QRect(0, 180, 60, 60))
+        self.whiteBoardButton.setGeometry(QRect(0, 240, 60, 60))
         self.whiteBoardButton.setFont(font1)
+        self.mouseButton = QPushButton(Form)
+        self.mouseButton.setObjectName(u"mouseButton")
+        self.mouseButton.setGeometry(QRect(0, 0, 60, 60))
+        self.mouseButton.setFont(font2)
 
         self.retranslateUi(Form)
 
@@ -66,5 +70,6 @@ class Ui_Form(object):
 "PPT", None))
         self.whiteBoardButton.setText(QCoreApplication.translate("Form", u"\u5e0c\u6c83\n"
 "\u767d\u677f", None))
+        self.mouseButton.setText(QCoreApplication.translate("Form", u"\u9f20\u6807", None))
     # retranslateUi
 

@@ -44,7 +44,7 @@ class UpDownWindow(QWidget, Ui_Form):
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
         
     def setup_window(self) -> None:
-        """设置窗口初始位置"""
+        """设置翻页按钮窗口初始位置"""
         # 获取屏幕尺寸
         screen = QGuiApplication.primaryScreen().geometry()
         screen_width = screen.width()
@@ -141,6 +141,9 @@ class penWindow(QWidget, penslots):
         if hasattr(self, 'PenButton') and self.PenButton:
             self.PenButton.clicked.connect(self.simulate_Pen_key)
             
+        if hasattr(self, 'mouseButton') and self.mouseButton:
+            self.mouseButton.clicked.connect(self.simulate_Mouse_key)
+
         if hasattr(self, 'EraserButton') and self.EraserButton:
             self.EraserButton.clicked.connect(self.simulate_Eraser_key)
             
@@ -159,13 +162,13 @@ class penWindow(QWidget, penslots):
         self.setWindowTitle("仅ppt可用")
         
     def setup_window(self) -> None:
-        """设置窗口初始位置"""
+        """设置功能窗口初始位置"""
         # 获取屏幕尺寸
         screen = QGuiApplication.primaryScreen().geometry()
         screen_height = screen.height()
         
         # 居于屏幕左下方
-        y = screen_height - 350
+        y = screen_height - 390
         x = 0            
         self.move(x, y)
     
@@ -236,6 +239,17 @@ class penWindow(QWidget, penslots):
             
         # 模拟按下Esc键
         pyautogui.press('esc')
+    def simulate_Mouse_key(self) -> None:
+        """模拟笔按键"""
+        # 查找并激活演示窗口
+        hwnd = self.find_presentation_window()
+        if hwnd:
+            # 激活窗口
+            win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+            win32gui.SetForegroundWindow(hwnd)
+        time.sleep(0.3)    
+        # 模拟按下Ctrl+P
+        pyautogui.hotkey('ctrl', 'a')
     def open_sth(self) -> None:
         """打开希沃白板"""
         softDir = r'"C:\Program Files (x86)\Seewo\EasiNote5\swenlauncher\swenlauncher.exe"'
