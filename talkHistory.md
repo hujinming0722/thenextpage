@@ -373,3 +373,4 @@ talkHistory.md
 任务完成
 
 代码变更
+pyinstaller main.py --onefile --noconsole --add-data="ui\icon.png:ui" --icon "ui\icon_256x256.ico"
