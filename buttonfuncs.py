@@ -121,18 +121,30 @@ class UpDownWindow(QWidget, Ui_Form):
 
 
 class penWindow(QWidget, penslots):
-    def __init__(self):
+    def __init__(self, is_second_window: bool = False):  # 新增标识参数
         # 正确调用父类初始化
         super().__init__()
         
         self.context_menu: Optional[QMenu] = None  # 右键菜单
+        self.is_second_window = is_second_window    # 标记是否为第二个窗口
 
         # 调用setupUi方法设置UI
         self.setupUi(self)
         
         self.init_ui()
-        self.setup_window()
-        #self.setup_window_right()
+        
+        # ========== 关键修改：避免递归 ==========
+        if not self.is_second_window:
+            # 1. 主实例：设置为右下位置
+            self.setup_window()
+            
+            # 2. 创建第二个实例（传入is_second_window=True，避免它再创建新窗口）
+            self.second_window = penWindow(is_second_window=True)
+            self.second_window.setup_window_right()  # 调用左下位置方法
+            self.second_window.show()  # 显示第二个窗口
+        else:
+            # 第二个实例：不创建新窗口，仅初始化（避免递归）
+            pass
         
     def init_ui(self) -> None:
         """初始化UI界面"""
@@ -168,7 +180,6 @@ class penWindow(QWidget, penslots):
         screen = QGuiApplication.primaryScreen().geometry()
         screen_height = screen.height()
         screen_width=screen.width()
-        print(screen_width)
         # 居于屏幕右下方
         y = screen_height - screen_height*0.35
         x = screen_width - screen_width*0.03
@@ -181,8 +192,8 @@ class penWindow(QWidget, penslots):
         screen_width=screen.width()
         print(screen_width)
         # 居于屏幕左下方
-        y = -screen_height - screen_height*0.35
-        x = -screen_width - screen_width*0.03
+        y = screen_height - screen_height*0.35
+        x = screen_width*0.001
         self.move(x, y)
     
     def set_context_menu(self, menu: QMenu) -> None:
