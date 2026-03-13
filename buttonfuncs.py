@@ -87,7 +87,7 @@ class UpDownWindow(QWidget, Ui_Form):
                 window_text = win32gui.GetWindowText(hwnd) or ""
                 class_name = win32gui.GetClassName(hwnd) or ""
                 # 查找WPS或PowerPoint的放映窗口
-                if (any(keyword in window_text.lower() for keyword in ['wps', 'powerpoint', '演示']) or 
+                if (any(keyword in window_text.lower() for keyword in ['wpp', 'powerpoint', '演示']) or 
                     any(keyword in class_name.lower() for keyword in ['wpp', 'powerpnt', 'presentation'])):
                     extra.append(hwnd)
             return True
