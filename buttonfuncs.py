@@ -132,6 +132,7 @@ class penWindow(QWidget, penslots):
         
         self.init_ui()
         self.setup_window()
+        #self.setup_window_right()
         
     def init_ui(self) -> None:
         """初始化UI界面"""
@@ -166,10 +167,22 @@ class penWindow(QWidget, penslots):
         # 获取屏幕尺寸
         screen = QGuiApplication.primaryScreen().geometry()
         screen_height = screen.height()
-        
+        screen_width=screen.width()
+        print(screen_width)
+        # 居于屏幕右下方
+        y = screen_height - screen_height*0.35
+        x = screen_width - screen_width*0.03
+        self.move(x, y)
+    def setup_window_right(self) -> None:
+        """设置功能窗口初始位置"""
+        # 获取屏幕尺寸
+        screen = QGuiApplication.primaryScreen().geometry()
+        screen_height = screen.height()
+        screen_width=screen.width()
+        print(screen_width)
         # 居于屏幕左下方
-        y = screen_height - 390
-        x = 0            
+        y = -screen_height - screen_height*0.35
+        x = -screen_width - screen_width*0.03
         self.move(x, y)
     
     def set_context_menu(self, menu: QMenu) -> None:
@@ -195,8 +208,7 @@ class penWindow(QWidget, penslots):
                 window_text = win32gui.GetWindowText(hwnd) or ""
                 class_name = win32gui.GetClassName(hwnd) or ""
                 # 查找WPS或PowerPoint的放映窗口
-                if (any(keyword in window_text.lower() for keyword in ['wps', 'powerpoint', '演示']) or 
-                    any(keyword in class_name.lower() for keyword in ['wpp', 'powerpnt', 'presentation'])):
+                if (any(keyword in class_name.lower() for keyword in ['wpp', 'powerpnt', 'presentation'])):
                     extra.append(hwnd)
             return True
             

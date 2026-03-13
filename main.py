@@ -102,7 +102,7 @@ class PPTController:
                 proc_name_lower = proc_name.lower()
                 
                 # 检查是否为PowerPoint或WPS演示相关进程
-                if any(keyword in proc_name_lower for keyword in ['powerpnt', 'wpp', 'wps']):
+                if any(keyword in proc_name_lower for keyword in ['powerpnt', 'wpp']):
                     presentation_detected = True
                     break
                     
