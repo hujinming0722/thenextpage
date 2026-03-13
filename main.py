@@ -140,7 +140,7 @@ class PPTController:
             
         self.left_window.show()
         self.right_window.show()
-        self.Pwindow.show()
+        self.Pwindow.show_all_penWindow()
         
         
     def hide_windows(self) -> None:
@@ -150,7 +150,7 @@ class PPTController:
         if self.right_window:
             self.right_window.hide()
         if self.Pwindow:
-            self.Pwindow.hide()
+            self.Pwindow.hide_all_penWindow()
             
     def toggle_startup(self, checked: bool) -> None:
         """切换开机自启动"""

@@ -141,11 +141,20 @@ class penWindow(QWidget, penslots):
             # 2. 创建第二个实例（传入is_second_window=True，避免它再创建新窗口）
             self.second_window = penWindow(is_second_window=True)
             self.second_window.setup_window_right()  # 调用左下位置方法
-            self.second_window.show()  # 显示第二个窗口
         else:
             # 第二个实例：不创建新窗口，仅初始化（避免递归）
             pass
-        
+    def show_all_penWindow(self):
+        """显示自身+第二个窗口"""
+        self.show()
+        if self.second_window:
+            self.second_window.show()
+    
+    def hide_all_penWindow(self):
+        """隐藏自身+第二个窗口"""
+        self.hide()
+        if self.second_window:
+            self.second_window.hide()
     def init_ui(self) -> None:
         """初始化UI界面"""
         # 按钮引用已经通过setupUi设置好了
