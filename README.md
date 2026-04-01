@@ -1,3 +1,5 @@
+# 欢迎来到我的黑历史
+都结束了吗？
 # PPT翻页助手 (thenextpage)
 
 这是一个基于PySide6开发的PPT翻页辅助工具。当检测到PowerPoint或WPS演示文稿程序运行时，会在屏幕左右两侧显示透明背景的控制窗口，通过点击按钮可以模拟键盘的上下方向键来实现PPT翻页。此程序也是EasyWriteWhiteboard的一部分，用于在演示过程中更方便地控制PPT翻页。
